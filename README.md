@@ -83,8 +83,8 @@
 
 1. **克隆项目**
    ```bash
-   git clone <your-repo-url>
-   cd nav-project
+   git clone https://github.com/mikesen6901/nav-site.git
+   cd nav-site
    ```
 
 2. **安装依赖**
@@ -109,7 +109,7 @@
    git init
    git add .
    git commit -m "Initial commit"
-   git remote add origin <your-github-repo>
+   git remote add origin https://github.com/mikesen6901/nav-site.git
    git push -u origin main
    ```
 
