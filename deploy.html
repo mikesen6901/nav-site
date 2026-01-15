@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>专业导航站</title>
+  <style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;line-height:1.6;transition:background-color .3s,color .3s}.app.light{--bg-primary:#f5f7fa;--bg-secondary:#fff;--text-primary:#2c3e50;--text-secondary:#606266;--border-color:#e4e7ed;--shadow:0 2px 12px rgba(0,0,0,.1);--hover-shadow:0 4px 20px rgba(0,0,0,.15)}.app.dark{--bg-primary:#1a1a1a;--bg-secondary:#2d2d2d;--text-primary:#e4e7ed;--text-secondary:#909399;--border-color:#4c4d4f;--shadow:0 2px 12px rgba(0,0,0,.5);--hover-shadow:0 4px 20px rgba(0,0,0,.7)}.app{min-height:100vh;background-color:var(--bg-primary);color:var(--text-primary)}.container{max-width:1200px;margin:0 auto;padding:0 20px}.header{background-color:var(--bg-secondary);box-shadow:var(--shadow);padding:20px 0;position:sticky;top:0;z-index:100}.header .container{display:flex;justify-content:space-between;align-items:center}.logo{font-size:24px;font-weight:700;color:var(--text-primary)}.theme-toggle{background:none;border:2px solid var(--border-color);border-radius:8px;padding:8px 16px;font-size:20px;cursor:pointer;transition:all .3s}.theme-toggle:hover{transform:scale(1.1);border-color:var(--text-primary)}.search-section{padding:40px 0}.search-box{display:flex;gap:10px;background-color:var(--bg-secondary);border-radius:50px;padding:10px 20px;box-shadow:var(--shadow);max-width:800px;margin:0 auto}.search-engine{border:none;background:none;color:var(--text-primary);font-size:14px;cursor:pointer;outline:none}.search-input{flex:1;border:none;background:none;color:var(--text-primary);font-size:16px;outline:none}.search-input::placeholder{color:var(--text-secondary)}.search-btn{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:10px 30px;border-radius:25px;cursor:pointer;font-size:14px;transition:all .3s}.search-btn:hover{transform:scale(1.05);box-shadow:0 4px 15px rgba(102,126,234,.4)}.main-content{padding:20px 0 60px}.nav-category{margin-bottom:40px}.category-title{font-size:22px;font-weight:700;margin-bottom:20px;padding-left:15px;border-left:4px solid #667eea;color:var(--text-primary)}.sites-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px}.site-card{background-color:var(--bg-secondary);border-radius:12px;padding:20px;display:flex;align-items:center;gap:15px;text-decoration:none;color:var(--text-primary);box-shadow:var(--shadow);transition:all .3s;border:1px solid var(--border-color)}.site-card:hover{transform:translateY(-5px);box-shadow:var(--hover-shadow);border-color:#667eea}.site-icon{width:50px;height:50px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;flex-shrink:0}.site-info{flex:1;min-width:0}.site-name{font-size:16px;font-weight:700;margin-bottom:4px;color:var(--text-primary)}.site-desc{font-size:13px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.footer{background-color:var(--bg-secondary);padding:30px 0;text-align:center;color:var(--text-secondary);box-shadow:var(--shadow)}@media(max-width:768px){.sites-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:15px}.search-box{flex-direction:column;border-radius:20px}.search-btn{width:100%}.logo{font-size:20px}}
+  </style>
+</head>
+<body>
+  <div class="app light" id="app">
+    <header class="header">
+      <div class="container">
+        <h1 class="logo">🌟 专业导航站</h1>
+        <div class="header-actions">
+          <button onclick="toggleTheme()" class="theme-toggle" id="themeBtn">🌙</button>
+        </div>
+      </div>
+    </header>
+    <section class="search-section">
+      <div class="container">
+        <div class="search-box">
+          <select id="searchEngine" class="search-engine">
+            <option value="baidu">百度</option>
+            <option value="google">Google</option>
+            <option value="bing">Bing</option>
+          </select>
+          <input id="searchInput" type="text" placeholder="搜索或输入网址..." class="search-input" onkeypress="if(event.key==='Enter')handleSearch()">
+          <button onclick="handleSearch()" class="search-btn">搜索</button>
+        </div>
+      </div>
+    </section>
+    <main class="main-content">
+      <div class="container" id="content"></div>
+    </main>
+    <footer class="footer">
+      <div class="container">
+        <p>© 2026 专业导航站 | Powered by Vue 3 + ESA</p>
+      </div>
+    </footer>
+  </div>
+  <script>
+const categories=[{id:1,name:'🔍 搜索引擎',sites:[{name:'百度',url:'https://www.baidu.com',desc:'全球最大中文搜索',icon:'🔍'},{name:'Google',url:'https://www.google.com',desc:'全球搜索引擎',icon:'G'},{name:'Bing',url:'https://www.bing.com',desc:'微软搜索引擎',icon:'B'}]},{id:2,name:'💬 社交媒体',sites:[{name:'微博',url:'https://weibo.com',desc:'中国社交平台',icon:'微'},{name:'知乎',url:'https://www.zhihu.com',desc:'问答社区',icon:'知'},{name:'Twitter',url:'https://twitter.com',desc:'全球社交网络',icon:'𝕏'}]},{id:3,name:'🎬 视频娱乐',sites:[{name:'哔哩哔哩',url:'https://www.bilibili.com',desc:'弹幕视频网站',icon:'B'},{name:'YouTube',url:'https://www.youtube.com',desc:'全球视频平台',icon:'▶'},{name:'抖音',url:'https://www.douyin.com',desc:'短视频平台',icon:'抖'}]},{id:4,name:'💻 开发工具',sites:[{name:'GitHub',url:'https://github.com',desc:'代码托管平台',icon:'🐙'},{name:'Stack Overflow',url:'https://stackoverflow.com',desc:'程序员问答',icon:'SO'},{name:'NPM',url:'https://www.npmjs.com',desc:'包管理工具',icon:'npm'},{name:'MDN',url:'https://developer.mozilla.org',desc:'Web开发文档',icon:'MDN'}]},{id:5,name:'🛒 电商购物',sites:[{name:'淘宝',url:'https://www.taobao.com',desc:'网购平台',icon:'淘'},{name:'京东',url:'https://www.jd.com',desc:'正品保障',icon:'京'},{name:'Amazon',url:'https://www.amazon.com',desc:'全球电商',icon:'A'}]}];function toggleTheme(){const app=document.getElementById('app');const btn=document.getElementById('themeBtn');if(app.classList.contains('light')){app.classList.remove('light');app.classList.add('dark');btn.textContent='☀️';localStorage.setItem('theme','dark')}else{app.classList.remove('dark');app.classList.add('light');btn.textContent='🌙';localStorage.setItem('theme','light')}}function handleSearch(){const input=document.getElementById('searchInput').value.trim();const engine=document.getElementById('searchEngine').value;if(!input)return;const engines={baidu:`https://www.baidu.com/s?wd=${encodeURIComponent(input)}`,google:`https://www.google.com/search?q=${encodeURIComponent(input)}`,bing:`https://www.bing.com/search?q=${encodeURIComponent(input)}`};if(input.startsWith('http')){window.open(input,'_blank')}else{window.open(engines[engine],'_blank')}}function renderCategories(){const content=document.getElementById('content');let html='';categories.forEach(cat=>{html+=`<section class="nav-category"><h2 class="category-title">${cat.name}</h2><div class="sites-grid">`;cat.sites.forEach(site=>{html+=`<a href="${site.url}" target="_blank" class="site-card"><div class="site-icon">${site.icon}</div><div class="site-info"><h3 class="site-name">${site.name}</h3><p class="site-desc">${site.desc}</p></div></a>`});html+='</div></section>'});content.innerHTML=html}window.onload=function(){const theme=localStorage.getItem('theme');if(theme==='dark'){document.getElementById('app').classList.remove('light');document.getElementById('app').classList.add('dark');document.getElementById('themeBtn').textContent='☀️'}renderCategories()};
+  </script>
+</body>
+</html>
