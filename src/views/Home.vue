@@ -38,6 +38,7 @@
     <!-- Navigation Categories -->
     <main class="main-content">
       <div class="container">
+        <div v-if="loading" class="loading-state">加载中...</div>
         <div v-for="category in categories" :key="category.id" class="category-section">
           <h2 class="category-title">{{ category.name }}</h2>
           <div class="sites-grid">
@@ -84,60 +85,8 @@ const searchEngines = [
 ]
 const selectedEngine = ref(searchEngines[0])
 
-const categories = ref([
-  {
-    id: 1,
-    name: '🔍 搜索引擎',
-    sites: [
-      { id: 1, name: '百度', url: 'https://www.baidu.com', icon: '🔵' },
-      { id: 2, name: 'Google', url: 'https://www.google.com', icon: '🔴' },
-      { id: 3, name: 'Bing', url: 'https://www.bing.com', icon: '🟢' },
-      { id: 4, name: 'DuckDuckGo', url: 'https://duckduckgo.com', icon: '🦆' }
-    ]
-  },
-  {
-    id: 2,
-    name: '💻 开发工具',
-    sites: [
-      { id: 5, name: 'GitHub', url: 'https://github.com', icon: '🐙' },
-      { id: 6, name: 'Stack Overflow', url: 'https://stackoverflow.com', icon: '📚' },
-      { id: 7, name: 'MDN', url: 'https://developer.mozilla.org', icon: '📖' },
-      { id: 8, name: 'NPM', url: 'https://www.npmjs.com', icon: '📦' },
-      { id: 9, name: 'CodePen', url: 'https://codepen.io', icon: '✏️' },
-      { id: 10, name: 'JSFiddle', url: 'https://jsfiddle.net', icon: '🎯' }
-    ]
-  },
-  {
-    id: 3,
-    name: '🤖 AI工具',
-    sites: [
-      { id: 11, name: 'ChatGPT', url: 'https://chat.openai.com', icon: '💬' },
-      { id: 12, name: 'Claude', url: 'https://claude.ai', icon: '🤖' },
-      { id: 13, name: 'Midjourney', url: 'https://www.midjourney.com', icon: '🎨' },
-      { id: 14, name: 'Copilot', url: 'https://github.com/features/copilot', icon: '👨‍💻' }
-    ]
-  },
-  {
-    id: 4,
-    name: '🎨 设计资源',
-    sites: [
-      { id: 15, name: 'Dribbble', url: 'https://dribbble.com', icon: '🏀' },
-      { id: 16, name: 'Behance', url: 'https://www.behance.net', icon: '🎭' },
-      { id: 17, name: 'Figma', url: 'https://www.figma.com', icon: '🎨' },
-      { id: 18, name: 'Unsplash', url: 'https://unsplash.com', icon: '📷' }
-    ]
-  },
-  {
-    id: 5,
-    name: '📚 学习平台',
-    sites: [
-      { id: 19, name: 'Coursera', url: 'https://www.coursera.org', icon: '🎓' },
-      { id: 20, name: 'edX', url: 'https://www.edx.org', icon: '📖' },
-      { id: 21, name: 'LeetCode', url: 'https://leetcode.com', icon: '💻' },
-      { id: 22, name: 'FreeCodeCamp', url: 'https://www.freecodecamp.org', icon: '🔥' }
-    ]
-  }
-])
+const categories = ref([])
+const loading = ref(true)
 
 const handleSearch = () => {
   if (!searchQuery.value.trim()) return
@@ -149,7 +98,6 @@ const handleSearch = () => {
 }
 
 onMounted(async () => {
-  // 从 API 加载数据
   try {
     const res = await fetch('/api/nav')
     const data = await res.json()
@@ -157,7 +105,63 @@ onMounted(async () => {
       categories.value = data.categories
     }
   } catch (e) {
-    console.log('使用默认数据')
+    // Fallback to default data
+    categories.value = [
+      {
+        id: 1,
+        name: '🔍 搜索引擎',
+        sites: [
+          { id: 1, name: '百度', url: 'https://www.baidu.com', icon: '🔵' },
+          { id: 2, name: 'Google', url: 'https://www.google.com', icon: '🔴' },
+          { id: 3, name: 'Bing', url: 'https://www.bing.com', icon: '🟢' },
+          { id: 4, name: 'DuckDuckGo', url: 'https://duckduckgo.com', icon: '🦆' }
+        ]
+      },
+      {
+        id: 2,
+        name: '💻 开发工具',
+        sites: [
+          { id: 5, name: 'GitHub', url: 'https://github.com', icon: '🐙' },
+          { id: 6, name: 'Stack Overflow', url: 'https://stackoverflow.com', icon: '📚' },
+          { id: 7, name: 'MDN', url: 'https://developer.mozilla.org', icon: '📖' },
+          { id: 8, name: 'NPM', url: 'https://www.npmjs.com', icon: '📦' },
+          { id: 9, name: 'CodePen', url: 'https://codepen.io', icon: '✏️' },
+          { id: 10, name: 'JSFiddle', url: 'https://jsfiddle.net', icon: '🎯' }
+        ]
+      },
+      {
+        id: 3,
+        name: '🤖 AI工具',
+        sites: [
+          { id: 11, name: 'ChatGPT', url: 'https://chat.openai.com', icon: '💬' },
+          { id: 12, name: 'Claude', url: 'https://claude.ai', icon: '🤖' },
+          { id: 13, name: 'Midjourney', url: 'https://www.midjourney.com', icon: '🎨' },
+          { id: 14, name: 'Copilot', url: 'https://github.com/features/copilot', icon: '👨‍💻' }
+        ]
+      },
+      {
+        id: 4,
+        name: '🎨 设计资源',
+        sites: [
+          { id: 15, name: 'Dribbble', url: 'https://dribbble.com', icon: '🏀' },
+          { id: 16, name: 'Behance', url: 'https://www.behance.net', icon: '🎭' },
+          { id: 17, name: 'Figma', url: 'https://www.figma.com', icon: '🎨' },
+          { id: 18, name: 'Unsplash', url: 'https://unsplash.com', icon: '📷' }
+        ]
+      },
+      {
+        id: 5,
+        name: '📚 学习平台',
+        sites: [
+          { id: 19, name: 'Coursera', url: 'https://www.coursera.org', icon: '🎓' },
+          { id: 20, name: 'edX', url: 'https://www.edx.org', icon: '📖' },
+          { id: 21, name: 'LeetCode', url: 'https://leetcode.com', icon: '💻' },
+          { id: 22, name: 'FreeCodeCamp', url: 'https://www.freecodecamp.org', icon: '🔥' }
+        ]
+      }
+    ]
+  } finally {
+    loading.value = false
   }
 })
 </script>
@@ -250,6 +254,14 @@ onMounted(async () => {
 
 .main-content {
   padding: 0 20px 80px;
+  min-height: 50vh;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .category-section {
