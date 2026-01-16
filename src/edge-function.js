@@ -9,13 +9,31 @@ const edgeKv = new EdgeKV({ namespace: KV_NAMESPACE });
 const DEFAULT_DATA = {
   categories: [
     {
-      id: 'search',
-      name: '搜索引擎',
-      icon: '🔍',
-      order: 0,
+      id: 1,
+      name: '🔍 搜索引擎',
       sites: [
-        { id: 'baidu', name: '百度', url: 'https://www.baidu.com', icon: '🔵' },
-        { id: 'google', name: 'Google', url: 'https://www.google.com', icon: '🔴' }
+        { id: 1, name: '百度', url: 'https://www.baidu.com', icon: '🔵' },
+        { id: 2, name: 'Google', url: 'https://www.google.com', icon: '🔴' },
+        { id: 3, name: 'Bing', url: 'https://www.bing.com', icon: '🟢' },
+        { id: 4, name: 'DuckDuckGo', url: 'https://duckduckgo.com', icon: '🦆' }
+      ]
+    },
+    {
+      id: 2,
+      name: '💻 开发工具',
+      sites: [
+        { id: 5, name: 'GitHub', url: 'https://github.com', icon: '🐙' },
+        { id: 6, name: 'Stack Overflow', url: 'https://stackoverflow.com', icon: '📚' },
+        { id: 7, name: 'MDN', url: 'https://developer.mozilla.org', icon: '📖' },
+        { id: 8, name: 'NPM', url: 'https://www.npmjs.com', icon: '📦' }
+      ]
+    },
+    {
+      id: 3,
+      name: '🤖 AI工具',
+      sites: [
+        { id: 11, name: 'ChatGPT', url: 'https://chat.openai.com', icon: '💬' },
+        { id: 12, name: 'Claude', url: 'https://claude.ai', icon: '🤖' }
       ]
     }
   ]
