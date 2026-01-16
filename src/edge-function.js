@@ -25,6 +25,11 @@ async function handleRequest(request) {
   const url = new URL(request.url);
   const path = url.pathname;
 
+  // 只处理 API 路由，其他请求不处理
+  if (!path.startsWith('/api/')) {
+    return fetch(request);
+  }
+
   // CORS 头
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -38,13 +43,7 @@ async function handleRequest(request) {
   }
 
   try {
-    // 只处理 API 路由
-    if (path.startsWith('/api/')) {
-      return await handleAPI(request, path, corsHeaders);
-    }
-
-    // 其他请求返回 null，让 ESA Pages 处理静态资源
-    return null;
+    return await handleAPI(request, path, corsHeaders);
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
