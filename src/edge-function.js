@@ -152,6 +152,8 @@ async function handleAPI(request, path, corsHeaders) {
   return new Response('Not Found', { status: 404, headers: corsHeaders });
 }
 
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request));
-});
+export default {
+  async fetch(request) {
+    return handleRequest(request);
+  }
+};
