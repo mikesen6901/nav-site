@@ -38,13 +38,13 @@ async function handleRequest(request) {
   }
 
   try {
-    // API 路由
+    // 只处理 API 路由
     if (path.startsWith('/api/')) {
       return await handleAPI(request, path, corsHeaders);
     }
 
-    // 返回 404
-    return new Response('Not Found', { status: 404 });
+    // 其他请求返回 null，让 ESA Pages 处理静态资源
+    return null;
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
