@@ -302,12 +302,17 @@ async function handleAPI(request, path, corsHeaders) {
 
   // 获取所有导航数据
   if (path === '/api/nav' && request.method === 'GET') {
-    let data = await edgeKv.get('nav_data');
-    if (!data) {
-      await edgeKv.put('nav_data', JSON.stringify(DEFAULT_DATA));
-      data = JSON.stringify(DEFAULT_DATA);
+    try {
+      let data = await edgeKv.get('nav_data');
+      if (!data) {
+        // EdgeKV 为空，直接返回默认数据
+        return new Response(JSON.stringify(DEFAULT_DATA), { headers: corsHeaders });
+      }
+      return new Response(data, { headers: corsHeaders });
+    } catch (error) {
+      // EdgeKV 出错，返回默认数据
+      return new Response(JSON.stringify(DEFAULT_DATA), { headers: corsHeaders });
     }
-    return new Response(data, { headers: corsHeaders });
   }
 
   // 管理员登录
