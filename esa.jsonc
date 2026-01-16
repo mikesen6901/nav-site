@@ -1,6 +1,8 @@
 {
     // 指定部署的目标项目
     "name": "nav-site-vue",
+    // 边缘函数入口文件（实现后台管理API）
+    "entry": "./src/edge-function.js",
     // 配置自定义安装指令
     "installCommand": "npm install",
     // 配置自定义构建命令

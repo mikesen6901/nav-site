@@ -1,0 +1,157 @@
+// ESA 边缘函数入口文件
+const ADMIN_PASSWORD = 'admin123'; // 管理员密码
+const KV_NAMESPACE = 'nav_data'; // KV 命名空间
+
+// 初始化 Edge KV
+const edgeKv = new EdgeKV({ namespace: KV_NAMESPACE });
+
+// 默认导航数据
+const DEFAULT_DATA = {
+  categories: [
+    {
+      id: 'search',
+      name: '搜索引擎',
+      icon: '🔍',
+      order: 0,
+      sites: [
+        { id: 'baidu', name: '百度', url: 'https://www.baidu.com', icon: '🔵' },
+        { id: 'google', name: 'Google', url: 'https://www.google.com', icon: '🔴' }
+      ]
+    }
+  ]
+};
+
+async function handleRequest(request) {
+  const url = new URL(request.url);
+  const path = url.pathname;
+
+  // CORS 头
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    // API 路由
+    if (path.startsWith('/api/')) {
+      return await handleAPI(request, path, corsHeaders);
+    }
+
+    // 返回 404
+    return new Response('Not Found', { status: 404 });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: corsHeaders
+    });
+  }
+}
+
+async function handleAPI(request, path, corsHeaders) {
+  // 验证管理员权限
+  const requireAuth = path.startsWith('/api/admin/');
+  if (requireAuth) {
+    const auth = request.headers.get('Authorization');
+    if (!auth || auth !== `Bearer ${ADMIN_PASSWORD}`) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: corsHeaders
+      });
+    }
+  }
+
+  // 获取所有导航数据
+  if (path === '/api/nav' && request.method === 'GET') {
+    let data = await edgeKv.get('nav_data');
+    if (!data) {
+      await edgeKv.put('nav_data', JSON.stringify(DEFAULT_DATA));
+      data = JSON.stringify(DEFAULT_DATA);
+    }
+    return new Response(data, { headers: corsHeaders });
+  }
+
+  // 管理员登录
+  if (path === '/api/admin/login' && request.method === 'POST') {
+    const body = await request.json();
+    if (body.password === ADMIN_PASSWORD) {
+      return new Response(JSON.stringify({ token: ADMIN_PASSWORD }), {
+        headers: corsHeaders
+      });
+    }
+    return new Response(JSON.stringify({ error: 'Invalid password' }), {
+      status: 401,
+      headers: corsHeaders
+    });
+  }
+
+  // 更新导航数据
+  if (path === '/api/admin/nav' && request.method === 'PUT') {
+    const body = await request.json();
+    await edgeKv.put('nav_data', JSON.stringify(body));
+    return new Response(JSON.stringify({ success: true }), {
+      headers: corsHeaders
+    });
+  }
+
+  // 添加分类
+  if (path === '/api/admin/category' && request.method === 'POST') {
+    const body = await request.json();
+    let data = JSON.parse(await edgeKv.get('nav_data') || JSON.stringify(DEFAULT_DATA));
+    data.categories.push(body);
+    await edgeKv.put('nav_data', JSON.stringify(data));
+    return new Response(JSON.stringify({ success: true }), {
+      headers: corsHeaders
+    });
+  }
+
+  // 删除分类
+  if (path.startsWith('/api/admin/category/') && request.method === 'DELETE') {
+    const id = path.split('/').pop();
+    let data = JSON.parse(await edgeKv.get('nav_data') || JSON.stringify(DEFAULT_DATA));
+    data.categories = data.categories.filter(c => c.id !== id);
+    await edgeKv.put('nav_data', JSON.stringify(data));
+    return new Response(JSON.stringify({ success: true }), {
+      headers: corsHeaders
+    });
+  }
+
+  // 添加网站
+  if (path === '/api/admin/site' && request.method === 'POST') {
+    const body = await request.json();
+    let data = JSON.parse(await edgeKv.get('nav_data') || JSON.stringify(DEFAULT_DATA));
+    const category = data.categories.find(c => c.id === body.categoryId);
+    if (category) {
+      category.sites.push(body.site);
+      await edgeKv.put('nav_data', JSON.stringify(data));
+    }
+    return new Response(JSON.stringify({ success: true }), {
+      headers: corsHeaders
+    });
+  }
+
+  // 删除网站
+  if (path.startsWith('/api/admin/site/') && request.method === 'DELETE') {
+    const [categoryId, siteId] = path.split('/').slice(-2);
+    let data = JSON.parse(await edgeKv.get('nav_data') || JSON.stringify(DEFAULT_DATA));
+    const category = data.categories.find(c => c.id === categoryId);
+    if (category) {
+      category.sites = category.sites.filter(s => s.id !== siteId);
+      await edgeKv.put('nav_data', JSON.stringify(data));
+    }
+    return new Response(JSON.stringify({ success: true }), {
+      headers: corsHeaders
+    });
+  }
+
+  return new Response('Not Found', { status: 404, headers: corsHeaders });
+}
+
+addEventListener('fetch', event => {
+  event.respondWith(handleRequest(event.request));
+});
