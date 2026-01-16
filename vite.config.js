@@ -7,5 +7,8 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     minify: 'esbuild'
+  },
+  server: {
+    historyApiFallback: true
   }
 })
